@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+:root {
+  --royal-maroon-dark: #3A0205;
+  --royal-maroon: #580509;
+  --royal-maroon-light: #7E0D13;
+  --gold-primary: #D4AF37;
+  --gold-light: #F5C842;
+  --gold-glow: #FAF0D7;
+  --surface-cream: #FAF7F2;
+  --surface-card: #FFFFFF;
+  --text-primary: #1F1A1A;
+  --text-muted: #6E6262;
+  --border-subtle: #E8DFD8;
+  --border-gold: rgba(212, 175, 55, 0.35);
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #2D0204;
+  color: #1F1A1A;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  min-height: 100vh;
+}
+
+/* Authentic Royal Khmer Pattern Canvas Background */
+.khmer-pattern-bg {
+  background-color: #380205;
+  background-image: 
+    radial-gradient(circle at 50% 20%, rgba(126, 13, 19, 0.45) 0%, rgba(45, 2, 4, 0.92) 80%),
+    linear-gradient(180deg, rgba(56, 2, 5, 0.88) 0%, rgba(35, 1, 3, 0.95) 100%),
+    url('/traditional-pattern.jpg');
+  background-repeat: repeat;
+  background-size: 320px 320px;
+  background-attachment: fixed;
+}
+
+/* Subtle Golden Shimmer */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #F5C842 0%, #D4AF37 50%, #C5A059 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-border-glow {
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+}
+
+.gold-badge {
+  background: linear-gradient(135deg, #FBF6EC 0%, #F5ECDA 100%);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  color: #580509;
+}
+
+/* Custom smooth scrollbar in warm gold/burgundy */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #380205;
+}
+::-webkit-scrollbar-thumb {
+  background: #D4AF37;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #F5C842;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

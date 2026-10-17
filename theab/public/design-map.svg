@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <linearGradient id="mapBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3A0205" />
+      <stop offset="100%" stop-color="#1A0102" />
+    </linearGradient>
+    <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="300" rx="16" fill="url(#mapBg)" stroke="#D4AF37" stroke-width="2" />
+
+  <!-- Grid lines -->
+  <g stroke="#D4AF37" stroke-opacity="0.12" stroke-width="1">
+    <line x1="0" y1="60" x2="400" y2="60" />
+    <line x1="0" y1="120" x2="400" y2="120" />
+    <line x1="0" y1="180" x2="400" y2="180" />
+    <line x1="0" y1="240" x2="400" y2="240" />
+    <line x1="80" y1="0" x2="80" y2="300" />
+    <line x1="160" y1="0" x2="160" y2="300" />
+    <line x1="240" y1="0" x2="240" y2="300" />
+    <line x1="320" y1="0" x2="320" y2="300" />
+  </g>
+
+  <!-- Major Roads in Golden Filigree -->
+  <g stroke="#F5C842" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.85">
+    <!-- Main Highway -->
+    <path d="M 30 270 L 140 180 L 260 180 L 370 70" />
+    <!-- Cross Boulevard -->
+    <path d="M 80 30 L 140 180 L 180 270" stroke-width="4" stroke="#D4AF37" />
+    <!-- Connecting Avenue -->
+    <path d="M 260 180 L 260 270" stroke-width="3" stroke="#D4AF37" />
+    <!-- North Avenue -->
+    <path d="M 260 180 L 340 30" stroke-width="3.5" stroke="#D4AF37" />
+  </g>
+
+  <!-- Street Names -->
+  <text x="70" y="240" font-family="-apple-system, sans-serif" font-size="9" font-weight="700" fill="#FAF0D7" opacity="0.8" transform="rotate(-38 70 240)">Russian Blvd (110)</text>
+  <text x="210" y="172" font-family="-apple-system, sans-serif" font-size="9" font-weight="700" fill="#FAF0D7" opacity="0.8">Sen Sok Main Ave (1003)</text>
+  <text x="310" y="110" font-family="-apple-system, sans-serif" font-size="9" font-weight="700" fill="#FAF0D7" opacity="0.8" transform="rotate(-42 310 110)">Hanoi Blvd (1019)</text>
+
+  <!-- Landmark 1: AEON Mall Sen Sok -->
+  <g transform="translate(130, 80)">
+    <rect x="-35" y="-14" width="70" height="28" rx="6" fill="#580509" stroke="#D4AF37" stroke-width="1.5" />
+    <text x="0" y="4" font-family="-apple-system, sans-serif" font-size="8" font-weight="800" fill="#F5C842" text-anchor="middle">AEON SEN SOK</text>
+  </g>
+
+  <!-- Landmark 2: Grand Wedding Venue Pin -->
+  <g transform="translate(260, 180)" filter="url(#goldGlow)">
+    <circle cx="0" cy="0" r="16" fill="#E11D48" stroke="#FFFFFF" stroke-width="2.5" />
+    <!-- Pin Icon -->
+    <path d="M -4 -4 L 4 -4 L 4 4 L -4 4 Z" fill="#FFFFFF" />
+    <!-- Pulse Ring -->
+    <circle cx="0" cy="0" r="24" fill="none" stroke="#F5C842" stroke-width="2" opacity="0.6" stroke-dasharray="4 4" />
+  </g>
+
+  <!-- Venue Callout Box -->
+  <g transform="translate(260, 130)">
+    <rect x="-85" y="-20" width="170" height="34" rx="8" fill="#F5C842" stroke="#FFFFFF" stroke-width="1.5" />
+    <polygon points="0,14 -6,22 6,22" fill="#F5C842" transform="translate(0, -2)" />
+    <text x="0" y="-3" font-family="-apple-system, sans-serif" font-size="9" font-weight="900" fill="#380205" text-anchor="middle">THE PREMIER CENTRE</text>
+    <text x="0" y="8" font-family="-apple-system, sans-serif" font-size="7.5" font-weight="700" fill="#580509" text-anchor="middle">Building C &bull; Sen Sok Venue</text>
+  </g>
+
+  <!-- Map Compass Rose -->
+  <g transform="translate(365, 35)">
+    <circle cx="0" cy="0" r="14" fill="#380205" stroke="#D4AF37" stroke-width="1.5" />
+    <path d="M 0 -11 L 3 0 L 0 11 L -3 0 Z" fill="#D4AF37" />
+    <path d="M -11 0 L 0 -3 L 11 0 L 0 3 Z" fill="#FAF0D7" />
+    <text x="0" y="-13" font-family="-apple-system, sans-serif" font-size="8" font-weight="900" fill="#F5C842" text-anchor="middle">N</text>
+  </g>
+</svg>

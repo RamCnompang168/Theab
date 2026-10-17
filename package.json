@@ -1,0 +1,10 @@
+{
+  "name": "somboth-fullstack",
+  "version": "1.0.0",
+  "description": "Somboth Wedding Management Platform",
+  "scripts": {
+    "start": "npm --prefix theab_api start",
+    "api": "npm --prefix theab_api start",
+    "web": "npm --prefix theab run dev"
+  }
+}
