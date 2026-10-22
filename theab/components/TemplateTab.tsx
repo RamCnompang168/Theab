@@ -29,13 +29,24 @@ import {
   Eye,
   RotateCcw,
   Loader2,
+  Plus,
+  Trash2,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
 import { ProjectData } from "./CreateProjectModal";
 import { api } from "@/app/api-client";
 
 interface TemplateTabProps {
   project: ProjectData;
-  onSaveTemplateNotification: () => void;
+  onSaveTemplateNotification: (message: string) => void;
+}
+
+interface ScheduleItem {
+  id: string;
+  time: string;
+  title: string;
+  desc: string;
 }
 
 export function TemplateTab({
@@ -45,14 +56,14 @@ export function TemplateTab({
   // -------------------------------------------------------------
   // 1. TOP BAR / VIEW STATES
   // -------------------------------------------------------------
-  const [selectedTemplate, setSelectedTemplate] = useState("Royal Gold Theme (W01)");
+  const [selectedTemplate, setSelectedTemplate] = useState("រចនាបថរាជសីមាស (W01)");
   const [isEditorExpanded, setIsEditorExpanded] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   // -------------------------------------------------------------
   // 2. COVER TEXT STYLE & COLOR PICKERS (Image 1)
   // -------------------------------------------------------------
-  const [coverText, setCoverText] = useState("You Are Cordially Invited");
+  const [coverText, setCoverText] = useState("សូមគោរពអញ្ជើញ");
   const [topColor, setTopColor] = useState("#FBE0B6");
   const [bottomColor, setBottomColor] = useState("#E9A96E");
   const [shadowColor, setShadowColor] = useState("#7A4A2E");
@@ -64,18 +75,18 @@ export function TemplateTab({
 
   // Cover & Background Images
   const [coverImage, setCoverImage] = useState("/backround-template.png");
-  const [backgroundImage, setBackgroundImage] = useState("/traditional-pattern.jpg");
+  const [backgroundImage, setBackgroundImage] = useState("/background2.jpg");
 
   // -------------------------------------------------------------
   // 3. MAIN HEADER SETTINGS (Image 2)
   // -------------------------------------------------------------
   const [mainTitle, setMainTitle] = useState(
-    project.title || (project.groomName ? `${project.groomName} & ${project.brideName} Wedding` : "")
+    project.title || (project.groomName ? `ពិធីមង្គលការ ${project.groomName} និង ${project.brideName}` : "")
   );
   const [groomName, setGroomName] = useState(project.groomName || "");
   const [brideName, setBrideName] = useState(project.brideName || "");
   const [isGroomFirst, setIsGroomFirst] = useState(true);
-  const [subtitle, setSubtitle] = useState("Cordially Invite You to Celebrate Our Special Day");
+  const [subtitle, setSubtitle] = useState("សូមអញ្ជើញចូលរួមអបអរសាទរថ្ងៃដ៏ពិសេសរបស់យើង");
   const [dateTime, setDateTime] = useState(
     project.date ? (project.time ? `${project.date} at ${project.time}` : project.date) : ""
   );
@@ -86,21 +97,21 @@ export function TemplateTab({
   // -------------------------------------------------------------
   // 4. INVITATION MESSAGE (Image 2)
   // -------------------------------------------------------------
-  const [messageTitle, setMessageTitle] = useState("Our Wedding Invitation");
+  const [messageTitle, setMessageTitle] = useState("លិខិតអញ្ជើញចូលរួមពិធីមង្គលការ");
   const [invitationMessage, setInvitationMessage] = useState(
-    "Together with our parents and families, we warmly invite you to join us as our honored guest in celebrating our wedding ceremony and reception banquet. Your presence and warm blessings will make our celebration truly complete."
+    "យើងខ្ញុំ និងក្រុមគ្រួសារ សូមគោរពអញ្ជើញលោកអ្នកចូលរួមជាភ្ញៀវកិត្តិយសក្នុងពិធីមង្គលការរបស់យើងខ្ញុំ។ វត្តមាន និងពរជ័យដ៏កក់ក្តៅរបស់លោកអ្នក នឹងធ្វើឱ្យពិធីរបស់យើងខ្ញុំពេញលេញ និងមានអត្ថន័យជាទីបំផុត។"
   );
 
   // -------------------------------------------------------------
   // 5. EVENT SCHEDULE / ITINERARY (Image 3)
   // -------------------------------------------------------------
   const [isScheduleOpen, setIsScheduleOpen] = useState(true);
-  const [scheduleItems, setScheduleItems] = useState([
-    { id: "s-1", time: "07:00 AM", title: "Groom Procession & Traditional Welcoming", desc: "Arrival of the groom, fruit tray gifts, and family blessings" },
-    { id: "s-2", time: "09:30 AM", title: "Ring Exchange & Tea Ceremony", desc: "Sacred marriage pledge and blessing by elder parents" },
-    { id: "s-3", time: "05:00 PM", title: "Evening Reception & Welcome Cocktails", desc: "Guest arrivals, photo booth memories, and seating" },
-    { id: "s-4", time: "06:30 PM", title: "Grand Wedding Banquet & Cake Cutting", desc: "Multi-course dinner service, couple grand entrance and toast" },
-    { id: "s-5", time: "08:30 PM", title: "Live Music & Dance Celebration", desc: "Live wedding orchestra, dance floor opening, and celebration" },
+  const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([
+    { id: "s-1", time: "07:00", title: "ពិធីដង្ហែរកូនកំលោះ និងទទួលភ្ញៀវ", desc: "ទទួលកូនកំលោះ និងជំនូនតាមប្រពៃណី" },
+    { id: "s-2", time: "09:30", title: "ពិធីចងដៃ និងបំពាក់ចិញ្ចៀន", desc: "សច្ចាប្រណិធាន និងពរជ័យពីចាស់ទុំ" },
+    { id: "s-3", time: "17:00", title: "ទទួលភ្ញៀវពេលល្ងាច", desc: "ថតរូបអនុស្សាវរីយ៍ និងទទួលភ្ញៀវ" },
+    { id: "s-4", time: "18:30", title: "ពិធីជប់លៀង និងកាត់នំ", desc: "ទទួលទានអាហារ សុន្ទរកថា និងកាត់នំ" },
+    { id: "s-5", time: "20:30", title: "តន្ត្រី និងរាំលេងកម្សាន្ត", desc: "រីករាយជាមួយតន្ត្រី និងរាំជុំគ្នា" },
   ]);
 
   // -------------------------------------------------------------
@@ -122,9 +133,9 @@ export function TemplateTab({
   // -------------------------------------------------------------
   // 8. GRATITUDE MESSAGE (Image 4 & 5)
   // -------------------------------------------------------------
-  const [gratitudeTitle, setGratitudeTitle] = useState("With Sincere Gratitude & Thanks");
+  const [gratitudeTitle, setGratitudeTitle] = useState("ដោយក្តីសោមនស្ស និងអំណរគុណ");
   const [gratitudeMessage, setGratitudeMessage] = useState(
-    "We express our deepest appreciation and heartfelt gratitude to our beloved parents, esteemed guests, family members, and friends who traveled from near and far to celebrate this monumental day with us. May joy, peace, and prosperity be with you always."
+    "យើងខ្ញុំសូមថ្លែងអំណរគុណយ៉ាងជ្រាលជ្រៅចំពោះមាតាបិតា ភ្ញៀវកិត្តិយស ក្រុមគ្រួសារ និងមិត្តភក្តិទាំងអស់ ដែលបានចំណាយពេលវេលាដ៏មានតម្លៃមកចូលរួមអបអរសាទរ។ សូមប្រកបដោយសេចក្តីសុខ សុភមង្គល និងជោគជ័យគ្រប់ប្រការ។"
   );
 
   // -------------------------------------------------------------
@@ -227,6 +238,27 @@ export function TemplateTab({
 
   const [isSaving, setIsSaving] = useState(false);
 
+  const updateScheduleItem = (id: string, updates: Partial<ScheduleItem>) => {
+    setScheduleItems((items) => items.map((item) => (item.id === id ? { ...item, ...updates } : item)));
+  };
+
+  const addScheduleItem = () => {
+    setScheduleItems((items) => [
+      ...items,
+      { id: `schedule-${Date.now()}`, time: "12:00", title: "កម្មវិធីថ្មី", desc: "ពិពណ៌នាអំពីកម្មវិធី" },
+    ]);
+  };
+
+  const moveScheduleItem = (index: number, direction: -1 | 1) => {
+    const nextIndex = index + direction;
+    if (nextIndex < 0 || nextIndex >= scheduleItems.length) return;
+    setScheduleItems((items) => {
+      const next = [...items];
+      [next[index], next[nextIndex]] = [next[nextIndex], next[index]];
+      return next;
+    });
+  };
+
   // Sync template from backend on project load
   useEffect(() => {
     if (!project?.id) return;
@@ -236,7 +268,14 @@ export function TemplateTab({
       if (!isSubscribed) return;
       if (res.success && res.data?.template) {
         const t = res.data.template;
-        if (t.selectedTemplate) setSelectedTemplate(t.selectedTemplate);
+        if (t.selectedTemplate) {
+          const legacyTemplateNames: Record<string, string> = {
+            "Royal Gold Theme (W01)": "រចនាបថរាជសីមាស (W01)",
+            "Modern Minimalist (W02)": "រចនាបថសាមញ្ញទាន់សម័យ (W02)",
+            "Lotus Blossom Romance (W03)": "រចនាបថផ្កាឈូក (W03)",
+          };
+          setSelectedTemplate(legacyTemplateNames[t.selectedTemplate] || t.selectedTemplate);
+        }
         if (t.coverText) setCoverText(t.coverText);
         if (t.topColor) setTopColor(t.topColor);
         if (t.bottomColor) setBottomColor(t.bottomColor);
@@ -322,15 +361,19 @@ export function TemplateTab({
 
     try {
       if (project?.id) {
-        await api.template.save(project.id, templatePayload);
+        const result = await api.template.save(project.id, templatePayload);
+        if (!result.success) {
+          throw new Error(result.error || "មិនអាចរក្សាទុកគំរូបានទេ");
+        }
       }
+      setSavedSuccess(true);
+      onSaveTemplateNotification("ការកែតម្រូវលិខិតអញ្ជើញត្រូវបានរក្សាទុករួចរាល់។");
+      setTimeout(() => setSavedSuccess(false), 2500);
     } catch (e) {
       console.error("Failed to save template to backend:", e);
+      onSaveTemplateNotification("មិនអាចរក្សាទុកបានទេ។ សូមពិនិត្យការភ្ជាប់ទៅម៉ាស៊ីនមេ ហើយព្យាយាមម្ដងទៀត។");
     } finally {
       setIsSaving(false);
-      setSavedSuccess(true);
-      onSaveTemplateNotification();
-      setTimeout(() => setSavedSuccess(false), 2500);
     }
   };
 
@@ -350,14 +393,14 @@ export function TemplateTab({
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-base sm:text-lg font-bold text-[#1F1A1A] tracking-tight">
-                Digital Wedding Invitation Template
+                គំរូលិខិតអញ្ជើញពិធីមង្គលការ
               </h2>
               <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#FBF6EC] border border-[#D4AF37]/40 text-[#580509]">
-                Live Sync Enabled
+                ធ្វើបច្ចុប្បន្នភាពភ្លាមៗ
               </span>
             </div>
             <p className="text-xs text-[#6E6262]">
-              Edit sections on the left and see immediate real-time updates on the right phone preview.
+              កែសម្រួលនៅខាងឆ្វេង ហើយមើលលទ្ធផលភ្លាមៗនៅលើទូរសព្ទខាងស្តាំ។
             </p>
           </div>
         </div>
@@ -369,16 +412,16 @@ export function TemplateTab({
             onChange={(e) => setSelectedTemplate(e.target.value)}
             className="px-3 py-1.5 rounded-full border border-[#E8DFD8] text-xs font-semibold text-[#1F1A1A] bg-white outline-none focus:border-[#580509]"
           >
-            <option>Royal Gold Theme (W01)</option>
-            <option>Modern Minimalist (W02)</option>
-            <option>Lotus Blossom Romance (W03)</option>
+            <option>រចនាបថរាជសីមាស (W01)</option>
+            <option>រចនាបថសាមញ្ញទាន់សម័យ (W02)</option>
+            <option>រចនាបថផ្កាឈូក (W03)</option>
           </select>
 
           <button
             onClick={() => setIsEditorExpanded(!isEditorExpanded)}
             className="p-2 rounded-full border border-[#E8DFD8] hover:bg-[#FAF7F2] text-[#6E6262] transition-colors cursor-pointer"
-            title={isEditorExpanded ? "Collapse Editor" : "Expand Editor"}
-            aria-label="Toggle editor full width"
+            title={isEditorExpanded ? "បង្រួមកម្មវិធីកែសម្រួល" : "ពង្រីកកម្មវិធីកែសម្រួល"}
+            aria-label="ប្ដូរទំហំកម្មវិធីកែសម្រួល"
           >
             {isEditorExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </button>
@@ -395,7 +438,7 @@ export function TemplateTab({
             ) : (
               <Save className="w-3.5 h-3.5" />
             )}
-            <span>{isSaving ? "Saving..." : savedSuccess ? "Saved Successfully!" : "Save"}</span>
+            <span>{isSaving ? "កំពុងរក្សាទុក..." : savedSuccess ? "រក្សាទុករួចរាល់!" : "រក្សាទុក"}</span>
           </button>
         </div>
       </div>
@@ -410,10 +453,10 @@ export function TemplateTab({
           <div className="bg-[#1F2937] text-white px-4 py-2.5 rounded-2xl flex items-center justify-between shadow-xs">
             <span className="text-xs font-bold tracking-wide uppercase flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Template Editor</span>
+              <span>កម្មវិធីកែសម្រួលគំរូ</span>
             </span>
             <span className="text-[11px] text-slate-300">
-              All changes sync instantly to preview
+              ការផ្លាស់ប្ដូរទាំងអស់បង្ហាញភ្លាមៗ
             </span>
           </div>
 
@@ -422,7 +465,7 @@ export function TemplateTab({
             <div className="flex items-center justify-between pb-2 border-b border-slate-100">
               <h3 className="text-sm font-bold text-[#1F1A1A] flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#580509]"></span>
-                <span>Cover Text Style &amp; Colors</span>
+                <span>រចនាបថ និងពណ៌អក្សរគម្រប</span>
               </h3>
               <button
                 type="button"
@@ -436,7 +479,7 @@ export function TemplateTab({
                 className="text-[11px] text-[#580509] hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <RotateCcw className="w-3 h-3" />
-                <span>Reset</span>
+                <span>កំណត់ឡើងវិញ</span>
               </button>
             </div>
 
@@ -459,7 +502,7 @@ export function TemplateTab({
             <div className="grid grid-cols-3 gap-2 text-center text-xs">
               {/* Top Color */}
               <div className="p-2.5 rounded-xl bg-[#FAF7F2] border border-[#E8DFD8]">
-                <label className="block text-[11px] font-bold text-[#6E6262] mb-1.5">Top</label>
+                <label className="block text-[11px] font-bold text-[#6E6262] mb-1.5">ខាងលើ</label>
                 <div className="flex items-center justify-center gap-1.5">
                   <input
                     type="color"
@@ -478,7 +521,7 @@ export function TemplateTab({
 
               {/* Bottom Color */}
               <div className="p-2.5 rounded-xl bg-[#FAF7F2] border border-[#E8DFD8]">
-                <label className="block text-[11px] font-bold text-[#6E6262] mb-1.5">Bottom</label>
+                <label className="block text-[11px] font-bold text-[#6E6262] mb-1.5">ខាងក្រោម</label>
                 <div className="flex items-center justify-center gap-1.5">
                   <input
                     type="color"
@@ -497,7 +540,7 @@ export function TemplateTab({
 
               {/* Shadow Color */}
               <div className="p-2.5 rounded-xl bg-[#FAF7F2] border border-[#E8DFD8]">
-                <label className="block text-[11px] font-bold text-[#6E6262] mb-1.5">Shadow</label>
+                <label className="block text-[11px] font-bold text-[#6E6262] mb-1.5">ស្រមោល</label>
                 <div className="flex items-center justify-center gap-1.5">
                   <input
                     type="color"
@@ -543,7 +586,7 @@ export function TemplateTab({
             <div className="grid grid-cols-2 gap-3 text-xs">
               <div className="p-2.5 rounded-xl bg-[#FAF7F2] border border-[#E8DFD8] flex items-center justify-between">
                 <div>
-                  <p className="text-[11px] font-bold text-[#1F1A1A]">Button Color</p>
+                  <p className="text-[11px] font-bold text-[#1F1A1A]">ពណ៌ប៊ូតុង</p>
                   <p className="text-[10px] text-[#6E6262]">{buttonColor}</p>
                 </div>
                 <input
@@ -556,7 +599,7 @@ export function TemplateTab({
 
               <div className="p-2.5 rounded-xl bg-[#FAF7F2] border border-[#E8DFD8] flex items-center justify-between">
                 <div>
-                  <p className="text-[11px] font-bold text-[#1F1A1A]">Text Color</p>
+                  <p className="text-[11px] font-bold text-[#1F1A1A]">ពណ៌អក្សរ</p>
                   <p className="text-[10px] text-[#6E6262]">{textColor}</p>
                 </div>
                 <input
@@ -571,7 +614,7 @@ export function TemplateTab({
             {/* Title Text Shadow Toggle matching Image 1 */}
             <div className="p-3 rounded-2xl bg-[#FAF7F2] border border-[#E8DFD8] flex items-start justify-between gap-3">
               <div>
-                <p className="text-xs font-bold text-[#1F1A1A]">Title Text Shadow</p>
+                <p className="text-xs font-bold text-[#1F1A1A]">ស្រមោលអក្សរចំណងជើង</p>
                 <p className="text-[11px] text-[#6E6262] leading-relaxed mt-0.5">
                   Applies to the main title, subtitle, invite line above the guest name, and all section headings (Location, Gallery, KHQR, Wishes).
                 </p>
@@ -595,7 +638,7 @@ export function TemplateTab({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
               {/* Cover Image Slot */}
               <div className="p-3 rounded-2xl bg-white border border-[#E8DFD8] text-center space-y-2">
-                <span className="block text-xs font-bold text-[#1F1A1A]">Main Cover Image</span>
+                <span className="block text-xs font-bold text-[#1F1A1A]">រូបគម្របសំខាន់</span>
                 <div className="relative w-full h-24 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 mx-auto">
                   <Image src={coverImage} alt="Cover preview" fill className="object-cover" />
                 </div>
@@ -613,7 +656,7 @@ export function TemplateTab({
                     className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#FAF7F2] hover:bg-[#F3E6E6] text-[#580509] text-xs font-semibold border border-[#E8DFD8] cursor-pointer"
                   >
                     <Upload className="w-3 h-3" />
-                    <span>Upload</span>
+                    <span>បញ្ចូលរូបភាព</span>
                   </button>
                   <button
                     type="button"
@@ -628,7 +671,7 @@ export function TemplateTab({
 
               {/* Background Image Slot */}
               <div className="p-3 rounded-2xl bg-white border border-[#E8DFD8] text-center space-y-2">
-                <span className="block text-xs font-bold text-[#1F1A1A]">Background Image</span>
+                <span className="block text-xs font-bold text-[#1F1A1A]">រូបភាពផ្ទៃក្រោយ</span>
                 <div className="relative w-full h-24 rounded-xl overflow-hidden bg-slate-900 border border-slate-200 mx-auto">
                   <Image src={backgroundImage} alt="Background preview" fill className="object-cover" />
                 </div>
@@ -646,11 +689,11 @@ export function TemplateTab({
                     className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#FAF7F2] hover:bg-[#F3E6E6] text-[#580509] text-xs font-semibold border border-[#E8DFD8] cursor-pointer"
                   >
                     <Upload className="w-3 h-3" />
-                    <span>Upload</span>
+                    <span>បញ្ចូលរូបភាព</span>
                   </button>
                   <button
                     type="button"
-                    onClick={() => setBackgroundImage("/traditional-pattern.jpg")}
+                    onClick={() => setBackgroundImage("/background2.jpg")}
                     className="w-7 h-7 rounded-full bg-rose-500 hover:bg-rose-600 text-white flex items-center justify-center cursor-pointer"
                     title="Reset to default"
                   >
@@ -665,12 +708,12 @@ export function TemplateTab({
           <div className="bg-white/98 rounded-3xl border border-[#D4AF37]/35 shadow-sm p-5 space-y-3.5">
             <h3 className="text-sm font-bold text-[#1F1A1A] flex items-center gap-1.5 pb-2 border-b border-slate-100">
               <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
-              <span>Main Header</span>
+              <span>ក្បាលលិខិតសំខាន់</span>
             </h3>
 
             {/* Main Title */}
             <div>
-              <label className="block text-xs font-bold text-[#1F1A1A] mb-1">Main Title</label>
+              <label className="block text-xs font-bold text-[#1F1A1A] mb-1">ចំណងជើងសំខាន់</label>
               <input
                 type="text"
                 value={mainTitle}
@@ -683,7 +726,7 @@ export function TemplateTab({
             {/* Couple Names + Order Toggle */}
             <div className="p-3 rounded-2xl bg-[#FAF7F2] border border-[#E8DFD8] space-y-2.5">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-[#1F1A1A]">Couple Display Order</span>
+                <span className="text-xs font-bold text-[#1F1A1A]">លំដាប់ឈ្មោះគូស្វាមីភរិយា</span>
                 <button
                   type="button"
                   onClick={() => setIsGroomFirst(!isGroomFirst)}
@@ -695,7 +738,7 @@ export function TemplateTab({
 
               <div className="grid grid-cols-2 gap-2.5">
                 <div>
-                  <label className="block text-[11px] font-semibold text-[#6E6262] mb-1">Groom Name</label>
+                  <label className="block text-[11px] font-semibold text-[#6E6262] mb-1">ឈ្មោះកូនកំលោះ</label>
                   <input
                     type="text"
                     value={groomName}
@@ -704,7 +747,7 @@ export function TemplateTab({
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-[#6E6262] mb-1">Bride Name</label>
+                  <label className="block text-[11px] font-semibold text-[#6E6262] mb-1">ឈ្មោះកូនក្រមុំ</label>
                   <input
                     type="text"
                     value={brideName}
@@ -717,7 +760,7 @@ export function TemplateTab({
 
             {/* Subtitle */}
             <div>
-              <label className="block text-xs font-bold text-[#1F1A1A] mb-1">Subtitle</label>
+              <label className="block text-xs font-bold text-[#1F1A1A] mb-1">ចំណងជើងរង</label>
               <input
                 type="text"
                 value={subtitle}
@@ -728,7 +771,7 @@ export function TemplateTab({
 
             {/* Date & Time */}
             <div>
-              <label className="block text-xs font-bold text-[#1F1A1A] mb-1">Date &amp; Time</label>
+              <label className="block text-xs font-bold text-[#1F1A1A] mb-1">កាលបរិច្ឆេទ និងម៉ោង</label>
               <input
                 type="text"
                 value={dateTime}
@@ -739,7 +782,7 @@ export function TemplateTab({
 
             {/* Location */}
             <div>
-              <label className="block text-xs font-bold text-[#1F1A1A] mb-1">Location</label>
+              <label className="block text-xs font-bold text-[#1F1A1A] mb-1">ទីតាំង</label>
               <input
                 type="text"
                 value={venueLocation}
@@ -753,11 +796,11 @@ export function TemplateTab({
           <div className="bg-white/98 rounded-3xl border border-[#D4AF37]/35 shadow-sm p-5 space-y-3.5">
             <h3 className="text-sm font-bold text-[#1F1A1A] flex items-center gap-1.5 pb-2 border-b border-slate-100">
               <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-              <span>Invitation Message</span>
+              <span>សារលិខិតអញ្ជើញ</span>
             </h3>
 
             <div>
-              <label className="block text-xs font-bold text-[#1F1A1A] mb-1">Message Title</label>
+              <label className="block text-xs font-bold text-[#1F1A1A] mb-1">ចំណងជើងសារ</label>
               <input
                 type="text"
                 value={messageTitle}
@@ -767,7 +810,7 @@ export function TemplateTab({
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#1F1A1A] mb-1">Invitation Message</label>
+              <label className="block text-xs font-bold text-[#1F1A1A] mb-1">សារអញ្ជើញ</label>
               <textarea
                 rows={3}
                 value={invitationMessage}
@@ -782,14 +825,14 @@ export function TemplateTab({
             <div className="flex items-center justify-between pb-2 border-b border-slate-100">
               <h3 className="text-sm font-bold text-[#1F1A1A] flex items-center gap-1.5">
                 <Calendar className="w-4 h-4 text-[#580509]" />
-                <span>Event Schedule &amp; Itinerary</span>
+                <span>កាលវិភាគ និងលំដាប់កម្មវិធី</span>
               </h3>
               <button
                 type="button"
                 onClick={() => setIsScheduleOpen(!isScheduleOpen)}
                 className="text-xs text-[#6E6262] hover:text-[#580509] cursor-pointer flex items-center gap-1"
               >
-                <span>{isScheduleOpen ? "Collapse" : "Expand"}</span>
+                <span>{isScheduleOpen ? "បង្រួម" : "ពង្រីក"}</span>
                 {isScheduleOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
               </button>
             </div>
@@ -798,35 +841,40 @@ export function TemplateTab({
               <div className="space-y-2.5 pt-1">
                 {scheduleItems.map((item, idx) => (
                   <div key={item.id} className="p-2.5 rounded-xl bg-[#FAF7F2] border border-[#E8DFD8] flex items-start gap-2.5">
-                    <span className="px-2 py-0.5 rounded-md bg-[#580509] text-[#F5C842] text-[10px] font-bold shrink-0 mt-0.5">
-                      {item.time}
-                    </span>
+                    <input
+                      type="time"
+                      aria-label={`ម៉ោងកម្មវិធីទី ${idx + 1}`}
+                      value={item.time}
+                      onChange={(e) => updateScheduleItem(item.id, { time: e.target.value })}
+                      className="w-24 px-1.5 py-1 rounded-md bg-[#580509] text-[#F5C842] text-[10px] font-bold shrink-0 mt-0.5 outline-none"
+                    />
                     <div className="flex-1 min-w-0">
                       <input
                         type="text"
                         value={item.title}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setScheduleItems((prev) =>
-                            prev.map((s, i) => (i === idx ? { ...s, title: val } : s))
-                          );
-                        }}
+                        aria-label={`ចំណងជើងកម្មវិធីទី ${idx + 1}`}
+                        onChange={(e) => updateScheduleItem(item.id, { title: e.target.value })}
                         className="w-full text-xs font-bold text-[#1F1A1A] bg-transparent outline-none border-b border-transparent focus:border-[#580509]"
                       />
                       <input
                         type="text"
                         value={item.desc}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setScheduleItems((prev) =>
-                            prev.map((s, i) => (i === idx ? { ...s, desc: val } : s))
-                          );
-                        }}
+                        aria-label={`ពិពណ៌នាកម្មវិធីទី ${idx + 1}`}
+                        onChange={(e) => updateScheduleItem(item.id, { desc: e.target.value })}
                         className="w-full text-[11px] text-[#6E6262] bg-transparent outline-none mt-0.5"
                       />
                     </div>
+                    <div className="flex shrink-0 items-center gap-1">
+                      <button type="button" onClick={() => moveScheduleItem(idx, -1)} disabled={idx === 0} aria-label="ផ្លាស់ទីឡើង" className="p-1 text-[#580509] disabled:opacity-30"><ArrowUp className="w-3.5 h-3.5" /></button>
+                      <button type="button" onClick={() => moveScheduleItem(idx, 1)} disabled={idx === scheduleItems.length - 1} aria-label="ផ្លាស់ទីចុះ" className="p-1 text-[#580509] disabled:opacity-30"><ArrowDown className="w-3.5 h-3.5" /></button>
+                      <button type="button" onClick={() => setScheduleItems((items) => items.filter((schedule) => schedule.id !== item.id))} aria-label="លុបកម្មវិធី" className="p-1 text-rose-600 hover:text-rose-800"><Trash2 className="w-3.5 h-3.5" /></button>
+                    </div>
                   </div>
                 ))}
+                <button type="button" onClick={addScheduleItem} className="w-full py-2 rounded-xl border border-dashed border-[#D4AF37] text-xs font-bold text-[#580509] hover:bg-[#FAF7F2] flex items-center justify-center gap-1.5">
+                  <Plus className="w-3.5 h-3.5" />
+                  បន្ថែមកម្មវិធី
+                </button>
               </div>
             )}
           </div>
@@ -835,13 +883,13 @@ export function TemplateTab({
           <div className="bg-white/98 rounded-3xl border border-[#D4AF37]/35 shadow-sm p-5 space-y-3.5">
             <h3 className="text-sm font-bold text-[#1F1A1A] flex items-center gap-1.5 pb-2 border-b border-slate-100">
               <span className="w-2 h-2 rounded-full bg-purple-600"></span>
-              <span>Location &amp; Maps</span>
+              <span>ទីតាំង និងផែនទី</span>
             </h3>
 
             <div>
               <label className="block text-xs font-bold text-[#1F1A1A] mb-1 flex items-center gap-1">
                 <MapPin className="w-3.5 h-3.5 text-[#580509]" />
-                <span>Google Maps URL</span>
+                <span>តំណភ្ជាប់ Google Maps</span>
               </label>
               <input
                 type="text"
@@ -853,7 +901,7 @@ export function TemplateTab({
 
             {/* Upload Design Map Optional */}
             <div className="p-3 rounded-2xl bg-[#FAF7F2] border border-[#E8DFD8] space-y-2">
-              <span className="block text-xs font-bold text-[#1F1A1A]">Upload a Design Map (Optional)</span>
+              <span className="block text-xs font-bold text-[#1F1A1A]">បញ្ចូលផែនទីរចនា (ជម្រើស)</span>
               <div className="relative w-full h-32 rounded-xl overflow-hidden bg-slate-900 border border-slate-200">
                 <Image src={designMapImage} alt="Design map route" fill className="object-cover" />
               </div>
@@ -871,7 +919,7 @@ export function TemplateTab({
                   className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white text-[#580509] text-xs font-semibold border border-[#E8DFD8] cursor-pointer"
                 >
                   <Upload className="w-3 h-3" />
-                  <span>Upload Map</span>
+                  <span>បញ្ចូលផែនទី</span>
                 </button>
                 <button
                   type="button"
@@ -889,7 +937,7 @@ export function TemplateTab({
           <div className="bg-white/98 rounded-3xl border border-[#D4AF37]/35 shadow-sm p-5 space-y-3.5">
             <h3 className="text-sm font-bold text-[#1F1A1A] flex items-center gap-1.5 pb-2 border-b border-slate-100">
               <span className="w-2 h-2 rounded-full bg-pink-600"></span>
-              <span>Photo Gallery (4 Photos)</span>
+              <span>បណ្ណាល័យរូបភាព (4 រូប)</span>
             </h3>
 
             <div className="grid grid-cols-2 gap-3">
@@ -913,7 +961,7 @@ export function TemplateTab({
                       className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white text-[#580509] text-[10px] font-semibold border border-[#E8DFD8] cursor-pointer"
                     >
                       <Upload className="w-3 h-3" />
-                      <span>Upload</span>
+                      <span>បញ្ចូល</span>
                     </button>
                     <button
                       type="button"
@@ -932,11 +980,11 @@ export function TemplateTab({
           <div className="bg-white/98 rounded-3xl border border-[#D4AF37]/35 shadow-sm p-5 space-y-3.5">
             <h3 className="text-sm font-bold text-[#1F1A1A] flex items-center gap-1.5 pb-2 border-b border-slate-100">
               <span className="w-2 h-2 rounded-full bg-amber-600"></span>
-              <span>Gratitude Message</span>
+              <span>សារថ្លែងអំណរគុណ</span>
             </h3>
 
             <div>
-              <label className="block text-xs font-bold text-[#1F1A1A] mb-1">Gratitude Title</label>
+              <label className="block text-xs font-bold text-[#1F1A1A] mb-1">ចំណងជើងអំណរគុណ</label>
               <input
                 type="text"
                 value={gratitudeTitle}
@@ -946,7 +994,7 @@ export function TemplateTab({
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#1F1A1A] mb-1">Gratitude Message</label>
+              <label className="block text-xs font-bold text-[#1F1A1A] mb-1">សារថ្លែងអំណរគុណ</label>
               <textarea
                 rows={3}
                 value={gratitudeMessage}
@@ -960,13 +1008,13 @@ export function TemplateTab({
           <div className="bg-white/98 rounded-3xl border border-[#D4AF37]/35 shadow-sm p-5 space-y-3.5">
             <h3 className="text-sm font-bold text-[#1F1A1A] flex items-center gap-1.5 pb-2 border-b border-slate-100">
               <span className="w-2 h-2 rounded-full bg-rose-600"></span>
-              <span>KHQR and QR Code</span>
+              <span>KHQR និងកូដ QR</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {/* Dollar QR */}
               <div className="p-3 rounded-2xl bg-[#FAF7F2] border border-[#E8DFD8] text-center space-y-2">
-                <span className="block text-xs font-bold text-[#1F1A1A]">KHQR Dollar ($)</span>
+                <span className="block text-xs font-bold text-[#1F1A1A]">KHQR ដុល្លារ ($)</span>
                 <div className="relative w-28 h-28 mx-auto rounded-xl overflow-hidden bg-white border border-slate-200 p-1">
                   <Image src={khqrUsdImage} alt="KHQR Dollar" fill className="object-contain p-1" />
                 </div>
@@ -984,7 +1032,7 @@ export function TemplateTab({
                     className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white text-[#580509] text-xs font-semibold border border-[#E8DFD8] cursor-pointer"
                   >
                     <Upload className="w-3 h-3" />
-                    <span>Upload</span>
+                    <span>បញ្ចូល</span>
                   </button>
                   <button
                     type="button"
@@ -998,7 +1046,7 @@ export function TemplateTab({
 
               {/* Riel QR */}
               <div className="p-3 rounded-2xl bg-[#FAF7F2] border border-[#E8DFD8] text-center space-y-2">
-                <span className="block text-xs font-bold text-[#1F1A1A]">KHQR Riel (KHR)</span>
+                <span className="block text-xs font-bold text-[#1F1A1A]">KHQR រៀល (KHR)</span>
                 <div className="relative w-28 h-28 mx-auto rounded-xl overflow-hidden bg-white border border-slate-200 p-1">
                   <Image src={khqrKhrImage} alt="KHQR Riel" fill className="object-contain p-1" />
                 </div>
@@ -1016,7 +1064,7 @@ export function TemplateTab({
                     className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white text-[#580509] text-xs font-semibold border border-[#E8DFD8] cursor-pointer"
                   >
                     <Upload className="w-3 h-3" />
-                    <span>Upload</span>
+                    <span>បញ្ចូល</span>
                   </button>
                   <button
                     type="button"
@@ -1032,7 +1080,7 @@ export function TemplateTab({
             {/* Bank details */}
             <div className="grid grid-cols-2 gap-2.5 pt-1 text-xs">
               <div>
-                <label className="block text-[11px] font-semibold text-[#6E6262] mb-1">Bank Name</label>
+                <label className="block text-[11px] font-semibold text-[#6E6262] mb-1">ឈ្មោះធនាគារ</label>
                 <input
                   type="text"
                   value={bankName}
@@ -1041,7 +1089,7 @@ export function TemplateTab({
                 />
               </div>
               <div>
-                <label className="block text-[11px] font-semibold text-[#6E6262] mb-1">Account Holder</label>
+                <label className="block text-[11px] font-semibold text-[#6E6262] mb-1">ម្ចាស់គណនី</label>
                 <input
                   type="text"
                   value={bankAccountName}
@@ -1060,10 +1108,10 @@ export function TemplateTab({
           <div className="w-full max-w-sm mb-2 flex items-center justify-between text-xs font-bold text-[#1F1A1A]">
             <span className="flex items-center gap-1.5">
               <Smartphone className="w-4 h-4 text-[#580509]" />
-              <span>Preview Template</span>
+              <span>មើលគំរូជាមុន</span>
             </span>
             <span className="text-[11px] font-semibold text-[#6E6262]">
-              Interactive Smartphone Mockup
+              គំរូទូរសព្ទអន្តរកម្ម
             </span>
           </div>
 
@@ -1088,7 +1136,7 @@ export function TemplateTab({
               <div className="relative h-96 w-full overflow-hidden bg-slate-900">
                 <Image
                   src={coverImage}
-                  alt="Wedding Couple Cover"
+                  alt="រូបគម្របគូស្វាមីភរិយា"
                   fill
                   className="object-cover object-top"
                   priority
@@ -1104,12 +1152,12 @@ export function TemplateTab({
                   {isPlayingMusic ? (
                     <>
                       <Volume2 className="w-3.5 h-3.5 text-[#F5C842] animate-pulse" />
-                      <span>Music On</span>
+                      <span>បើកតន្ត្រី</span>
                     </>
                   ) : (
                     <>
                       <VolumeX className="w-3.5 h-3.5 text-slate-400" />
-                      <span>Music Off</span>
+                      <span>បិទតន្ត្រី</span>
                     </>
                   )}
                 </button>
@@ -1157,7 +1205,7 @@ export function TemplateTab({
                 <div className="absolute bottom-2 left-0 right-0 flex justify-center">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/50 backdrop-blur-md text-[#FAF0D7] text-[10px] border border-[#D4AF37]/30 animate-bounce">
                     <span>👆</span>
-                    <span>Scroll down</span>
+                    <span>អូសចុះក្រោម</span>
                   </div>
                 </div>
               </div>
@@ -1192,39 +1240,39 @@ export function TemplateTab({
                 {/* ---------------- 3. LIVE COUNTDOWN TIMER (Image 2) ---------------- */}
                 <div className="p-4 rounded-2xl bg-gradient-to-b from-[#4A0408]/90 to-[#2D0204]/90 border border-[#D4AF37]/40 shadow-md backdrop-blur-xs">
                   <p className="text-[11px] font-bold text-[#F5C842] uppercase tracking-wider mb-2.5">
-                    Celebration Countdown
+                    រាប់ថយក្រោយដល់ថ្ងៃពិធី
                   </p>
                   <div className="grid grid-cols-4 gap-2 text-center">
                     <div className="p-2 rounded-xl bg-black/40 border border-[#D4AF37]/30">
                       <span className="block text-lg font-black text-[#F5C842]">{timeLeft.days}</span>
-                      <span className="text-[9px] text-[#FAF0D7]/70 uppercase">Days</span>
+                      <span className="text-[9px] text-[#FAF0D7]/70">ថ្ងៃ</span>
                     </div>
                     <div className="p-2 rounded-xl bg-black/40 border border-[#D4AF37]/30">
                       <span className="block text-lg font-black text-[#F5C842]">{timeLeft.hours}</span>
-                      <span className="text-[9px] text-[#FAF0D7]/70 uppercase">Hours</span>
+                      <span className="text-[9px] text-[#FAF0D7]/70">ម៉ោង</span>
                     </div>
                     <div className="p-2 rounded-xl bg-black/40 border border-[#D4AF37]/30">
                       <span className="block text-lg font-black text-[#F5C842]">{timeLeft.mins}</span>
-                      <span className="text-[9px] text-[#FAF0D7]/70 uppercase">Mins</span>
+                      <span className="text-[9px] text-[#FAF0D7]/70">នាទី</span>
                     </div>
                     <div className="p-2 rounded-xl bg-black/40 border border-[#D4AF37]/30">
                       <span className="block text-lg font-black text-[#F5C842]">{timeLeft.secs}</span>
-                      <span className="text-[9px] text-[#FAF0D7]/70 uppercase">Secs</span>
+                      <span className="text-[9px] text-[#FAF0D7]/70">វិនាទី</span>
                     </div>
                   </div>
                   <button
                     type="button"
-                    onClick={() => alert("Added to your Calendar (Google & Apple iCal)!")}
+                    onClick={() => alert("បានបន្ថែមទៅប្រតិទិនរបស់អ្នករួចរាល់!")}
                     className="w-full mt-3 py-1.5 rounded-full bg-[#FAF7F2] text-[#380205] text-xs font-bold hover:bg-white transition-colors cursor-pointer"
                   >
-                    📅 Save Date to Calendar
+                    📅 រក្សាទុកថ្ងៃពិធីក្នុងប្រតិទិន
                   </button>
                 </div>
 
                 {/* ---------------- 4. EVENT SCHEDULE SECTION ---------------- */}
                 <div className="p-4 rounded-2xl bg-[#2D0204]/90 border border-[#D4AF37]/40 shadow-md text-left space-y-2.5 backdrop-blur-xs">
                   <p className="text-xs font-bold text-[#F5C842] uppercase tracking-wider text-center">
-                    Event Schedule
+                    កាលវិភាគកម្មវិធី
                   </p>
                   <div className="space-y-2 text-xs">
                     {scheduleItems.map((item) => (
@@ -1245,13 +1293,13 @@ export function TemplateTab({
                 <div className="p-4 rounded-2xl bg-[#2D0204]/90 border border-[#D4AF37]/40 shadow-md space-y-3 backdrop-blur-xs">
                   <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-[#F5C842] uppercase tracking-wider">
                     <MapPin className="w-3.5 h-3.5 text-[#F5C842]" />
-                    <span>Venue &amp; Location</span>
+                    <span>ទីតាំងពិធី</span>
                   </div>
                   <p className="text-xs text-[#FAF0D7] font-semibold">{venueLocation}</p>
 
                   {/* Route Map Graphic */}
                   <div className="relative w-full h-44 rounded-xl overflow-hidden border border-[#D4AF37]/40 shadow-inner">
-                    <Image src="/map-template.png" alt="Venue " fill className="object-cover" />
+                    <Image src="/map-template.png" alt="ផែនទីទីតាំងពិធី" fill className="object-cover" />
                   </div>
 
                   <a
@@ -1260,7 +1308,7 @@ export function TemplateTab({
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center gap-1.5 w-full py-2 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#F5C842] text-[#380205] text-xs font-bold hover:brightness-105 transition-all shadow-xs"
                   >
-                    <span>Open in Google Maps</span>
+                    <span>បើកក្នុង Google Maps</span>
                     <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 </div>
@@ -1268,7 +1316,7 @@ export function TemplateTab({
                 {/* ---------------- 6. PHOTO GALLERY 2x2 (Image 4) ---------------- */}
                 <div className="p-4 rounded-2xl bg-[#2D0204]/90 border border-[#D4AF37]/40 shadow-md space-y-3 backdrop-blur-xs">
                   <p className="text-xs font-bold text-[#F5C842] uppercase tracking-wider">
-                    Couple Photo Gallery
+                    បណ្ណាល័យរូបភាពគូស្វាមីភរិយា
                   </p>
                   <div className="grid grid-cols-2 gap-2">
                     {galleryPhotos.map((photo, idx) => (
@@ -1276,7 +1324,7 @@ export function TemplateTab({
                         key={idx}
                         className="relative h-32 rounded-xl overflow-hidden border border-[#D4AF37]/30 shadow-xs hover:scale-105 transition-transform duration-300"
                       >
-                        <Image src={photo} alt={`Couple ${idx + 1}`} fill className="object-cover" />
+                        <Image src={photo} alt={`រូបភាពគូស្វាមីភរិយាទី ${idx + 1}`} fill className="object-cover" />
                       </div>
                     ))}
                   </div>
@@ -1301,7 +1349,7 @@ export function TemplateTab({
                 <div className="p-4 rounded-2xl bg-gradient-to-b from-[#380205] to-[#240102] border border-[#D4AF37]/50 shadow-md space-y-3 backdrop-blur-xs">
                   <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-[#F5C842] uppercase tracking-wider">
                     <QrCode className="w-4 h-4 text-[#F5C842]" />
-                    <span>Wedding Gift Envelope (KHQR)</span>
+                    <span>ស្រោមសំបុត្រចំណងដៃ (KHQR)</span>
                   </div>
 
                   {/* USD / KHR Currency Switcher Pills */}
@@ -1326,7 +1374,7 @@ export function TemplateTab({
                           : "bg-black/30 text-[#FAF0D7]/70 hover:text-white"
                       }`}
                     >
-                      KHR (Riel)
+                      KHR (រៀល)
                     </button>
                   </div>
 
@@ -1345,27 +1393,27 @@ export function TemplateTab({
                   {/* Bank info */}
                   <div className="text-center text-[11px] text-[#FAF0D7]/80 pt-1">
                     <p className="font-bold text-[#F5C842]">{bankAccountName}</p>
-                    <p>{bankName} &bull; Scan with any banking app</p>
+                    <p>{bankName} &bull; ស្កេនជាមួយកម្មវិធីធនាគារ</p>
                   </div>
                 </div>
 
                 {/* ---------------- 9. INTERACTIVE RSVP FORM ---------------- */}
                 <div className="p-4 rounded-2xl bg-white/95 text-slate-900 shadow-md space-y-2.5">
                   <p className="text-xs font-bold text-[#580509] uppercase tracking-wider">
-                    Will You Be Attending?
+                    តើអ្នកនឹងចូលរួមទេ?
                   </p>
                   <input
                     type="text"
                     value={previewRsvpName}
                     onChange={(e) => setPreviewRsvpName(e.target.value)}
-                    placeholder="Enter your full guest name..."
+                    placeholder="បញ្ចូលឈ្មោះពេញរបស់អ្នក..."
                     className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 focus:border-[#580509] outline-none"
                   />
                   <button
                     type="button"
                     onClick={() => {
                       if (!previewRsvpName.trim()) {
-                        alert("Please enter your name to confirm attendance!");
+                        alert("សូមបញ្ចូលឈ្មោះរបស់អ្នក ដើម្បីបញ្ជាក់ការចូលរួម!");
                         return;
                       }
                       setPreviewRsvpSuccess(true);
@@ -1373,12 +1421,12 @@ export function TemplateTab({
                     }}
                     className="w-full py-2.5 rounded-full bg-[#580509] hover:bg-[#430205] text-[#F5C842] text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95"
                   >
-                    {previewRsvpSuccess ? "✓ Attendance Confirmed! Thank you!" : "✓ Confirm Attendance (RSVP)"}
+                    {previewRsvpSuccess ? "✓ បានបញ្ជាក់ការចូលរួម! សូមអរគុណ!" : "✓ បញ្ជាក់ការចូលរួម (RSVP)"}
                   </button>
                 </div>
 
                 <div className="pt-2 pb-4 text-center text-[10px] text-[#FAF0D7]/60">
-                  <p>Somboth &bull; Digital Wedding Invitation Suite</p>
+                  <p>Somboth &bull; ប្រព័ន្ធលិខិតអញ្ជើញពិធីមង្គលការឌីជីថល</p>
                 </div>
               </div>
             </div>

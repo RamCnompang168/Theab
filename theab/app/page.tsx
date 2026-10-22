@@ -31,6 +31,11 @@ import {
 export default function App() {
   // Page View Mode: "landing" (default public homepage) vs "dashboard" (management suite)
   const [viewMode, setViewMode] = useState<"landing" | "dashboard">("landing");
+  const [language, setLanguage] = useState<"en" | "km">(() => {
+    if (typeof window === "undefined") return "en";
+    const savedLanguage = localStorage.getItem("somboth_language");
+    return savedLanguage === "km" ? "km" : "en";
+  });
 
   // User Authentication State (initially null for visitors)
   const [user, setUser] = useState<{ name: string; email: string; avatar: string } | null>(null);
@@ -82,6 +87,15 @@ export default function App() {
   };
 
   // On initial mount: restore user session if token exists
+  useEffect(() => {
+    localStorage.setItem("somboth_language", language);
+    document.documentElement.lang = language === "km" ? "km" : "en";
+  }, [language]);
+
+  const dashboardLabels = language === "km"
+    ? { dashboard: "ផ្ទាំងគ្រប់គ្រង", guests: "ភ្ញៀវ", expenses: "ចំណាយ", gifts: "ចំណងដៃ", template: "គំរូ", addTemplate: "+ បន្ថែមគំរូ" }
+    : { dashboard: "Dashboard", guests: "Guests", expenses: "Expenses", gifts: "Wedding Gift", template: "Template", addTemplate: "+ Add Template" };
+
   useEffect(() => {
     const token = getStoredToken();
     if (!token) return;
@@ -305,6 +319,8 @@ export default function App() {
         onOpenAuth={() => setIsAuthModalOpen(true)}
         onOpenCreateProject={handleInitiateCreateProject}
         onLogout={handleLogout}
+        language={language}
+        onLanguageChange={setLanguage}
       />
 
       {/* Main View Switcher: Landing Page vs Management Dashboard */}
@@ -320,6 +336,7 @@ export default function App() {
             user={user}
             hasProject={!!project}
             onOpenDashboard={() => setViewMode("dashboard")}
+            language={language}
           />
 
           {/* What is Somboth Section */}
@@ -373,7 +390,7 @@ export default function App() {
                     }`}
                   >
                     <LayoutDashboard className="w-4 h-4" />
-                    <span>Dashboard</span>
+                    <span>{dashboardLabels.dashboard}</span>
                   </button>
 
                   {/* 2. Guests Tab */}
@@ -386,7 +403,7 @@ export default function App() {
                     }`}
                   >
                     <Users className="w-4 h-4" />
-                    <span>Guests</span>
+                    <span>{dashboardLabels.guests}</span>
                     <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-black/20 text-[#FAF0D7]">
                       {totalGuestsCount}
                     </span>
@@ -402,7 +419,7 @@ export default function App() {
                     }`}
                   >
                     <Receipt className="w-4 h-4" />
-                    <span>Expenses</span>
+                    <span>{dashboardLabels.expenses}</span>
                   </button>
 
                   {/* 4. Wedding Gift Tab */}
@@ -415,7 +432,7 @@ export default function App() {
                     }`}
                   >
                     <Gift className="w-4 h-4" />
-                    <span>Wedding Gift</span>
+                    <span>{dashboardLabels.gifts}</span>
                     <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-purple-900/40 text-[#FAF0D7]">
                       {gifts.length}
                     </span>
@@ -431,7 +448,7 @@ export default function App() {
                     }`}
                   >
                     <Palette className="w-4 h-4" />
-                    <span>Template</span>
+                    <span>{dashboardLabels.template}</span>
                   </button>
                 </nav>
 
@@ -444,7 +461,7 @@ export default function App() {
                   className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-dashed border-[#D4AF37]/60 text-xs font-semibold text-[#580509] hover:bg-[#FAF7F2] transition-colors cursor-pointer ml-2 whitespace-nowrap"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>+ Add Template</span>
+                  <span>{dashboardLabels.addTemplate}</span>
                 </button>
               </div>
 
@@ -500,9 +517,7 @@ export default function App() {
               {activeTab === "template" && (
                 <TemplateTab
                   project={currentProject}
-                  onSaveTemplateNotification={() =>
-                    showToast("Wedding invitation template customizations saved successfully!")
-                  }
+                  onSaveTemplateNotification={showToast}
                 />
               )}
             </div>

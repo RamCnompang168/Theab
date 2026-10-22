@@ -26,6 +26,8 @@ interface NavbarProps {
   onOpenAuth: () => void;
   onOpenCreateProject: () => void;
   onLogout: () => void;
+  language: "en" | "km";
+  onLanguageChange: (language: "en" | "km") => void;
 }
 
 const LANGUAGES = [
@@ -41,8 +43,9 @@ export function Navbar({
   onOpenAuth,
   onOpenCreateProject,
   onLogout,
+  language,
+  onLanguageChange,
 }: NavbarProps) {
-  const [selectedLang, setSelectedLang] = useState("English");
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
@@ -61,6 +64,15 @@ export function Navbar({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const selectedLanguage = LANGUAGES.find((item) => item.code === language) || LANGUAGES[0];
+  const text = language === "km"
+    ? {
+        about: "អំពី Somboth", what: "Somboth ជាអ្វី?", capabilities: "មុខងារ", how: "របៀបប្រើ", create: "+ បង្កើតគម្រោង", dashboard: "ផ្ទាំងគ្រប់គ្រង", select: "ជ្រើសរើសភាសា", signIn: "ចូលគណនី",
+      }
+    : {
+        about: "About Somboth", what: "What is Somboth", capabilities: "Capabilities", how: "How It Works", create: "+ Create Project", dashboard: "My Dashboard", select: "Select Language", signIn: "Sign In",
+      };
 
   return (
     <header className="sticky top-0 z-40 w-full bg-[#350204]/95 backdrop-blur-md border-b border-[#D4AF37]/35 shadow-[0_4px_20px_rgba(0,0,0,0.3)] transition-all">
@@ -95,7 +107,7 @@ export function Navbar({
               className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold text-[#FAF0D7]/80 hover:text-white hover:bg-white/10 transition-colors"
             >
               <Home className="w-3.5 h-3.5" />
-              <span>About Somboth</span>
+              <span>{text.about}</span>
             </button>
           )}
         </div>
@@ -104,13 +116,13 @@ export function Navbar({
         {viewMode === "landing" && (
           <nav className="hidden lg:flex items-center gap-6 text-xs font-semibold text-[#FAF0D7]/80">
             <a href="#about" className="hover:text-[#F5C842] transition-colors">
-              What is Somboth
+              {text.what}
             </a>
             <a href="#capabilities" className="hover:text-[#F5C842] transition-colors">
-              Capabilities
+              {text.capabilities}
             </a>
             <a href="#how-it-works" className="hover:text-[#F5C842] transition-colors">
-              How It Works
+              {text.how}
             </a>
             <a href="#faq" className="hover:text-[#F5C842] transition-colors">
               FAQ
@@ -132,7 +144,7 @@ export function Navbar({
               className="inline-flex items-center gap-1.5 px-4 py-1.5 sm:px-4.5 sm:py-2 rounded-full bg-gradient-to-r from-[#D4AF37] via-[#F5C842] to-[#D4AF37] hover:from-[#E5B842] hover:to-[#E5B842] text-[#350204] font-black text-xs shadow-md active:scale-95 transition-all cursor-pointer border border-white/40"
             >
               <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>+ Create Project</span>
+              <span>{text.create}</span>
             </button>
           )}
 
@@ -142,7 +154,7 @@ export function Navbar({
               onClick={() => onSetViewMode("dashboard")}
               className="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#580509] hover:bg-[#430205] text-[#FAF0D7] text-xs font-semibold border border-[#D4AF37]/40 transition-colors"
             >
-              <span>My Dashboard</span>
+              <span>{text.dashboard}</span>
               <ArrowRight className="w-3.5 h-3.5 text-[#F5C842]" />
             </button>
           )}
@@ -155,8 +167,8 @@ export function Navbar({
               aria-label="Select language"
             >
               <Globe className="w-3.5 h-3.5 text-[#F5C842]" />
-              <span className="hidden sm:inline">{selectedLang}</span>
-              <span className="sm:hidden">{selectedLang.slice(0, 2).toUpperCase()}</span>
+              <span className="hidden sm:inline">{selectedLanguage.name}</span>
+              <span className="sm:hidden">{selectedLanguage.code.toUpperCase()}</span>
               {isLangOpen ? (
                 <ChevronUp className="w-3 h-3 text-[#D4AF37]" />
               ) : (
@@ -167,13 +179,13 @@ export function Navbar({
             {isLangOpen && (
               <div className="absolute right-0 mt-2 w-44 bg-white rounded-2xl shadow-xl border border-[#D4AF37]/40 py-1 z-50 animate-in fade-in zoom-in-95 duration-150">
                 <div className="px-3 py-1 text-[10px] font-semibold text-[#6E6262] uppercase tracking-wider">
-                  Select Language
+                  {text.select}
                 </div>
                 {LANGUAGES.map((lang) => (
                   <button
                     key={lang.code}
                     onClick={() => {
-                      setSelectedLang(lang.name);
+                      onLanguageChange(lang.code as "en" | "km");
                       setIsLangOpen(false);
                     }}
                     className="w-full text-left px-3 py-2 text-xs text-[#1F1A1A] hover:bg-[#FAF7F2] hover:text-[#580509] flex items-center justify-between transition-colors"
@@ -182,7 +194,7 @@ export function Navbar({
                       <span>{lang.flag}</span>
                       <span>{lang.name}</span>
                     </span>
-                    {selectedLang === lang.name && (
+                    {language === lang.code && (
                       <Check className="w-3.5 h-3.5 text-[#580509]" />
                     )}
                   </button>
@@ -281,7 +293,7 @@ export function Navbar({
               onClick={onOpenAuth}
               className="px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-[#FAF0D7] text-xs font-semibold border border-[#D4AF37]/35 transition-colors"
             >
-              Sign In
+              {text.signIn}
             </button>
           )}
         </div>

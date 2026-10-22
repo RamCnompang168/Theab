@@ -25,23 +25,17 @@ function request(options, data = null) {
 async function runTests() {
   console.log("Starting comprehensive API test suite for Somboth API...\n");
 
+  function requireSuccess(label, response) {
+    if (!response || response.status < 200 || response.status >= 300 || !response.data?.success) {
+      throw new Error(`${label} failed: ${response?.data?.error || response?.raw || `HTTP ${response?.status}`}`);
+    }
+    return response.data;
+  }
+
   // 1. Health check
   const health = await request({ hostname: "localhost", port: 5000, path: "/api/health", method: "GET" });
+  if (health.status !== 200 || health.data?.status !== "OK") throw new Error("Health check failed");
   console.log("✓ Health Check:", health.data.status, `(uptime: ${health.data.uptimeSeconds}s)`);
-
-  // 2. Login as Demo User
-  const loginRes = await request(
-    {
-      hostname: "localhost",
-      port: 5000,
-      path: "/api/auth/login",
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-    },
-    { email: "korng.korng@somboth.com", password: "password123" }
-  );
-  console.log("✓ Demo Login:", loginRes.data.success ? "SUCCESS" : "FAILED", `User: ${loginRes.data.user?.name}`);
-  const demoToken = loginRes.data.token;
 
   // 3. Register New User
   const randomEmail = `organizer_${Date.now()}@somboth.com`;
@@ -60,8 +54,23 @@ async function runTests() {
       role: "Wedding Planner",
     }
   );
-  console.log("✓ New User Registration:", regRes.data.success ? "SUCCESS" : "FAILED", `Email: ${regRes.data.user?.email}`);
-  const userToken = regRes.data.token;
+  const registeredUser = requireSuccess("User registration", regRes);
+  console.log("✓ New User Registration: SUCCESS", `Email: ${registeredUser.user?.email}`);
+
+  // 3b. Login with that newly registered user: do not assume a demo account exists.
+  const loginRes = await request(
+    {
+      hostname: "localhost",
+      port: 5000,
+      path: "/api/auth/login",
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    },
+    { email: randomEmail, password: "secretPassword2026" }
+  );
+  const authenticatedUser = requireSuccess("Login", loginRes);
+  console.log("✓ Login: SUCCESS", `User: ${authenticatedUser.user?.name}`);
+  const userToken = authenticatedUser.token;
 
   // 4. Create Project
   const createProjRes = await request(
@@ -88,8 +97,9 @@ async function runTests() {
       exchangeRateKHR: 4100,
     }
   );
-  const newProjId = createProjRes.data.project.id;
-  console.log("✓ Create Project:", createProjRes.data.success ? "SUCCESS" : "FAILED", `ID: ${newProjId}`);
+  const createdProject = requireSuccess("Create project", createProjRes);
+  const newProjId = createdProject.project.id;
+  console.log("✓ Create Project: SUCCESS", `ID: ${newProjId}`);
 
   // 5. Template auto-initialization check
   const tplRes = await request({
@@ -98,7 +108,8 @@ async function runTests() {
     path: `/api/template/${newProjId}`,
     method: "GET",
   });
-  console.log("✓ Auto Template Init:", tplRes.data.success ? "SUCCESS" : "FAILED", `Title: "${tplRes.data.template.mainTitle}"`);
+  const template = requireSuccess("Auto template initialization", tplRes).template;
+  console.log("✓ Auto Template Init: SUCCESS", `Title: "${template.mainTitle}"`);
 
   // 6. Add Guest
   const addGuestRes = await request(
